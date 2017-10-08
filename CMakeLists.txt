@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(camera_homography)
+project(drive_ros_camera_homography)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -109,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES camera_homography
-  CATKIN_DEPENDS cv_bridge geometry_msgs rospy sensor_msgs 
+  CATKIN_DEPENDS cv_bridge geometry_msgs rospy sensor_msgs
 #  DEPENDS system_lib
 )
 
