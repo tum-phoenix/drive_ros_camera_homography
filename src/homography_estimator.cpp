@@ -216,9 +216,6 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
               ROS_INFO_STREAM("cam2world" << cam2world);
               ROS_INFO_STREAM("world2cam" << world2cam);
 
-              // Save to file
-              saveHomography();
-
               // Compute top view
               computeTopView();
               // Show preview
@@ -226,7 +223,11 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
               cv::warpPerspective(img, topView, topView2cam.inv(), topViewSize);
               cv::imshow("homography_estimator_preview", topView);
 
+              // Save to file
+              saveHomography();
+
               ROS_INFO_STREAM("Homography computed. Abort Program or start over with another image (press any key).");
+
               cv::waitKey(0);
 
           }
@@ -350,40 +351,19 @@ bool HomographyEstimator::findPoints(const cv::Mat& img, std::vector<cv::Point2f
 void HomographyEstimator::saveHomography()
 {
 
-// TODO: implement some fancy saving function
+  std::string filepath;
 
-//    // Save homography
-//    if(!isEnableSave()) {
-//        logger.error() << "Command line option --enable-save was not specified";
-//        return;
-//    }
+  if (!pnh_.getParam("save_file", filepath)) {
+    ROS_ERROR("Unable to load 'save_file' parameter. Abort");
+  }
 
-//    if(cam2world.rows != 3 || cam2world.cols != 3) {
-//        logger.error("cam2world") << "Invalid homography matrix dimensions: " << cam2world.rows << " x " << cam2world.cols;
-//        return;
-//    }
+  ROS_INFO_STREAM("Saving parameters to file:" << filepath);
 
-//    std::ofstream out(saveLogDir("homography_estimator") + "homography.lconf");
+  cv::FileStorage file(filepath, cv::FileStorage::WRITE);
+  file << "world2cam" << world2cam;
+  file << "cam2world" << cam2world;
 
-//    out << "cam2world = ";
-//    for(int r = 0; r < 3; r++) {
-//        for(int c = 0; c < 3; c++) {
-//            out << cam2world.at<double>(r, c);
-//            if( r != 2 || c != 2) { //not ending with ,
-//                out << ",";
-//            }
-//        }
-//    }
-//    out << std::endl;
+  file.release();
 
-//    out << "world2cam = ";
-//    for(int r = 0; r < 3; r++) {
-//        for(int c = 0; c < 3; c++) {
-//            out << world2cam.at<double>(r, c);
-//            if( r != 2 || c != 2) { //not ending with ,
-//                out << ",";
-//            }
-//        }
-//    }
-//    out << std::endl;
+
 }

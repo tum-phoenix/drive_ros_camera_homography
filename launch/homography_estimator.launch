@@ -7,5 +7,7 @@
     <node name="camera_homography_estimator" pkg="drive_ros_camera_homography" type="camera_homography_estimator" respawn="false" output="screen">
         <!--<remap from="~/img_in" to="$(arg image_topic)"/>
         <remap from="~/cam_info" to="$(arg cam_info_topic)"/>-->
+
+        <param name="save_file" type="str" value="$(find drive_ros_camera_homography)/homography_export.yml" />
     </node>
 </launch>
