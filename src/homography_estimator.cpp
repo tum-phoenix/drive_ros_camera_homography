@@ -136,7 +136,11 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
     imgLoaded = false;
     return;
   }
-  img = cv_ptr->image;
+
+  // undistort image
+  cv::undistort(cv_ptr->image, img, camera_model_.intrinsicMatrix(), camera_model_.distortionCoeffs());
+
+  // convert color space
   cv::cvtColor(img, imgColor, CV_GRAY2BGR);
 
   // get estimates points from cfg
