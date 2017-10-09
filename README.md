@@ -2,7 +2,7 @@
 Estimates homography between camera and ground plane and save transformation parameters to a file.
 
 ## Usage
-0. put your camera in front of a camera calibration pattern or use recorded *.bag file
+0. put your camera in front of a camera [calibration pattern](https://github.com/tum-phoenix/drive_ros_camera_homography/tree/master/doc/pattern) or use recorded *.bag file of pattern
 1. adapt topic names to your environment
 2. launch .launch file
 3. fire up `rqt` and open dynamic reconfigure plugin
