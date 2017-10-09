@@ -32,8 +32,8 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
   pnh_(pnh)
 {
   // subscribe to topics
-  image_sub_ = it_.subscribe("/camera/image_raw", 1, &HomographyEstimator::imageCb, this);
-  cam_info_sub = nh_.subscribe("/camera/camera_info", 1, &HomographyEstimator::camInfoCb, this);
+  image_sub_ = it_.subscribe("img_in", 1, &HomographyEstimator::imageCb, this);
+  cam_info_sub = nh_.subscribe("cam_info", 1, &HomographyEstimator::camInfoCb, this);
 
   // launch CV windows
   cv::namedWindow("homography_estimator_input");
@@ -325,7 +325,7 @@ bool HomographyEstimator::findPoints(const cv::Mat& img, std::vector<cv::Point2f
             success = cv::findChessboardCorners(img, patternSize, points);
             break;
         case Pattern::CIRCLES:
-            success = cv::findCirclesGrid(img, patternSize, points, cv::CALIB_CB_SYMMETRIC_GRID);
+            success = cv::findCirclesGrid(img, patternSize, points, cv::CALIB_CB_SYMMETRIC_GRID, blobDetector);
             break;
         case Pattern::CIRCLES_ASYMMETRIC:
             success = cv::findCirclesGrid(img, patternSize, points, cv::CALIB_CB_ASYMMETRIC_GRID, blobDetector);
@@ -340,6 +340,9 @@ bool HomographyEstimator::findPoints(const cv::Mat& img, std::vector<cv::Point2f
 
 void HomographyEstimator::saveHomography()
 {
+
+// TODO: implement some fancy saving function
+
 //    // Save homography
 //    if(!isEnableSave()) {
 //        logger.error() << "Command line option --enable-save was not specified";
