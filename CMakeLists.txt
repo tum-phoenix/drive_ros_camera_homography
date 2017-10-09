@@ -140,7 +140,10 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(camera_homography_estimator src/homography_estimator.cpp)
+add_executable(camera_homography_estimator
+    src/homography_estimator.cpp
+    src/homography_estimator_node.cpp
+    )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -205,3 +208,13 @@ add_dependencies(camera_homography_estimator ${PROJECT_NAME}_gencfg ${${PROJECT_
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+    add_rostest_gtest(camera_homography_estimator_test launch/homography_estimator.test
+        test/homography_estimator_test.cpp
+        src/homography_estimator.cpp
+        )
+    target_link_libraries(camera_homography_estimator_test ${catkin_LIBRARIES})
+endif()

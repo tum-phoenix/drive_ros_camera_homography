@@ -28,7 +28,8 @@ public:
     HomographyEstimator(const ros::NodeHandle nh, const ros::NodeHandle pnh);
     ~HomographyEstimator();
 
-protected:
+
+private:
 
     ros::NodeHandle nh_;
     ros::NodeHandle pnh_;
@@ -68,6 +69,9 @@ protected:
 
     bool computeRefinement(const std::vector<cv::Point2f> detectedPoints);
     void computeTopView();
+
+    // make this public so we can test it
+    cv::Point checkPointSize(const cv::Mat& img, const int x, const int y);
 
     dynamic_reconfigure::Server<drive_ros_camera_homography::homography_estimatorConfig> dyn_rec_server;
     dynamic_reconfigure::Server<drive_ros_camera_homography::homography_estimatorConfig>::CallbackType dyn_rec_cbtype;

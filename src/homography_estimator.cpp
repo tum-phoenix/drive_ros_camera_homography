@@ -5,26 +5,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "road_detection");
-  ros::NodeHandle nh;
-  ros::NodeHandle pnh("~");
-
-#ifndef NDEBUG
-  // give GDB time to attach
-  ros::Duration(2.0).sleep();
-#endif
-
-  HomographyEstimator homography(nh,pnh);
-  ROS_INFO("homography estimator node succesfully initialized");
-
-  while (ros::ok()) {
-    ros::spin();
-  }
-  return 0;
-}
-
 // constructor
 HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::NodeHandle pnh):
   nh_(nh),
@@ -32,8 +12,8 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
   pnh_(pnh)
 {
   // subscribe to topics
-  image_sub_ = it_.subscribe("img_in", 1, &HomographyEstimator::imageCb, this);
-  cam_info_sub = nh_.subscribe("cam_info", 1, &HomographyEstimator::camInfoCb, this);
+  image_sub_ = it_.subscribe("/camera/image_raw", 1, &HomographyEstimator::imageCb, this);
+  cam_info_sub = nh_.subscribe("/camera/camera_info", 1, &HomographyEstimator::camInfoCb, this);
 
   // launch CV windows
   cv::namedWindow("homography_estimator_input");
@@ -161,25 +141,25 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
   // get estimates points from cfg
   std::vector<cv::Point2f> estimatePoints;
-  estimatePoints.emplace_back(cfg.p_top_left_x, cfg.p_top_left_y);
-  estimatePoints.emplace_back(cfg.p_top_right_x, cfg.p_top_right_y);
-  estimatePoints.emplace_back(cfg.p_bot_right_x, cfg.p_bot_right_y);
-  estimatePoints.emplace_back(cfg.p_bot_left_x, cfg.p_bot_left_y);
+  estimatePoints.emplace_back(checkPointSize(img, cfg.p_top_left_x, cfg.p_top_left_y));
+  estimatePoints.emplace_back(checkPointSize(img, cfg.p_top_right_x, cfg.p_top_right_y));
+  estimatePoints.emplace_back(checkPointSize(img, cfg.p_bot_right_x, cfg.p_bot_right_y));
+  estimatePoints.emplace_back(checkPointSize(img, cfg.p_bot_left_x, cfg.p_bot_left_y));
 
-  line(imgColor, cv::Point(cfg.p_bot_right_x, cfg.p_bot_right_y),
-                 cv::Point(cfg.p_bot_left_x, cfg.p_bot_left_y),
+  line(imgColor, checkPointSize(img, cfg.p_bot_right_x, cfg.p_bot_right_y),
+                 checkPointSize(img, cfg.p_bot_left_x, cfg.p_bot_left_y),
                  cv::Scalar(110, 220, 0),  2, 8 );
 
-  line(imgColor, cv::Point(cfg.p_bot_left_x, cfg.p_bot_left_y),
-                 cv::Point(cfg.p_top_left_x, cfg.p_top_left_y),
+  line(imgColor, checkPointSize(img, cfg.p_bot_left_x, cfg.p_bot_left_y),
+                 checkPointSize(img, cfg.p_top_left_x, cfg.p_top_left_y),
                  cv::Scalar(110, 220, 0),  2, 8 );
 
-  line(imgColor, cv::Point(cfg.p_top_left_x, cfg.p_top_left_y),
-                 cv::Point(cfg.p_top_right_x, cfg.p_top_right_y),
+  line(imgColor, checkPointSize(img, cfg.p_top_left_x, cfg.p_top_left_y),
+                 checkPointSize(img, cfg.p_top_right_x, cfg.p_top_right_y),
                  cv::Scalar(110, 220, 0),  2, 8 );
 
-  line(imgColor, cv::Point(cfg.p_top_right_x, cfg.p_top_right_y),
-                 cv::Point(cfg.p_bot_right_x, cfg.p_bot_right_y),
+  line(imgColor, checkPointSize(img, cfg.p_top_right_x, cfg.p_top_right_y),
+                 checkPointSize(img, cfg.p_bot_right_x, cfg.p_bot_right_y),
                  cv::Scalar(110, 220, 0),  2, 8 );
 
   cv::imshow("homography_estimator_input", imgColor);
@@ -257,6 +237,31 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
 }
 
 
+// check if points are in image borders
+cv::Point HomographyEstimator::checkPointSize(const cv::Mat& img, const int x, const int y)
+{
+  int im_x = img.cols;
+  int im_y = img.rows;
+
+  cv::Point ret;
+
+  if(x > im_x){
+    ret.x = im_x;
+  }else{
+    ret.x = x;
+  }
+
+  if(y > im_y){
+    ret.y = im_y;
+  }else{
+    ret.y = y;
+  }
+
+  return ret;
+}
+
+
+// get block parameters
 cv::SimpleBlobDetector::Params HomographyEstimator::getBlobDetectorParams()
 {
     // Blob detector
