@@ -1,15 +1,17 @@
 # Camera Homography Estimator
-Estimates homography between camera and ground plane and save transformation parameters to a file.
+estimates [homography](https://en.wikipedia.org/wiki/Homography_(computer_vision)) between camera and calibration pattern plane and save transformation parameters to a .yaml file.
 
-## Usage
-0. put your camera in front of a camera [calibration pattern](https://github.com/tum-phoenix/drive_ros_camera_homography/tree/master/doc/pattern) or use recorded *.bag file of pattern
+## usage
+0. put your camera in front of a [camera calibration pattern](https://github.com/tum-phoenix/drive_ros_camera_homography/tree/master/doc/pattern) or use recorded `*.bag` file of pattern
 1. adapt topic names to your environment
-2. launch .launch file
-3. fire up `rqt` and open dynamic reconfigure plugin
-4. adjust parameters until blob detector finds all pattern points
-5. parameter file will be saved to the directory specified in .launch file
+2. launch `homography_estimator.launch` file
+3. fire up `rqt` and open dynamic_reconfigure plugin
+4. set correct pattern parameters
+5. adjust estimated points for homography until your pattern fits nicely into the green box
+6. adjust parameters of blob detector until all pattern marks are recognized
+7. parameter file will be saved to the directory specified in `homography_estimator.launch` file
 
-## Parameters
+## parameters
 - pattern type (supported: `chessboard`, `circles`, `circles_asymmetric`)
 - estimated points for homography `p_{bot|top}_{right|left}_{x|y}` (border of green lines in `homography_estimator_input` image)
 - size of pattern (`points_per_col` and `points_per_row`)
@@ -19,6 +21,10 @@ Estimates homography between camera and ground plane and save transformation par
 - [blob filter settings](https://www.learnopencv.com/blob-detection-using-opencv-python-c/)
 
 ![List of Parameters](https://github.com/tum-phoenix/drive_ros_camera_homography/blob/master/doc/rqt_dynamic_reconfigure.png)
+
+## detecting hints
+- make the estimated points slightly bigger than the real edges of the pattern (see `homography_estimator_input` example)
+- the keypoints detected by the blob filter should be the same as the size of the pattern (no missing or extra keypoints), use the blob filter parameters to tweak until all pattern marks are recognized by the blob filter and all noise blobs are gone
 
 ## windows
 ### homography_estimator_input
