@@ -67,3 +67,7 @@ cam2world: !!opencv-matrix
        8.3393416152725042e-01 ]
 ```
        
+## credits
+- [mherb](https://github.com/orgs/tum-phoenix/people/mherb)
+- [Phibedy](https://github.com/orgs/tum-phoenix/people/Phibedy)
+- [fabolhak](https://github.com/orgs/tum-phoenix/people/fabolhak)
