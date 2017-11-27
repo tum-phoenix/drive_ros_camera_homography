@@ -8,8 +8,8 @@
 // constructor
 HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::NodeHandle pnh):
   nh_(nh),
-  it_(pnh),
-  pnh_(pnh)
+  pnh_(pnh),
+  it_(pnh)
 {
   // subscribe to topics
   image_sub_ = it_.subscribe("/camera/image_raw", 1, &HomographyEstimator::imageCb, this);
@@ -34,6 +34,7 @@ HomographyEstimator::~HomographyEstimator() {
 
 void HomographyEstimator::reconfigureCB(drive_ros_camera_homography::homography_estimatorConfig& config, uint32_t level)
 {
+  level=level+1; // just to avoid warnings
   cfg = config;
   ROS_INFO_STREAM("update configs from reconfigure");
 }
@@ -69,9 +70,9 @@ void HomographyEstimator::computePatternPoints()
 {
     worldPoints.resize(0);
 
-    float length = cfg.pattern_length;
-    float offset_x = cfg.pattern_offset_x;
-    float offset_y = cfg.pattern_offset_y;
+    double length = cfg.pattern_length;
+    double offset_x = cfg.pattern_offset_x;
+    double offset_y = cfg.pattern_offset_y;
 
     switch (pattern) {
         case Pattern::CHESSBOARD:
@@ -273,20 +274,20 @@ cv::SimpleBlobDetector::Params HomographyEstimator::getBlobDetectorParams()
     // Blob detector
     cv::SimpleBlobDetector::Params blobParams;
     blobParams.filterByCircularity  = cfg.blob_filter_by_circularity;
-    blobParams.minCircularity       = cfg.blob_min_circularity;
-    blobParams.maxCircularity       = cfg.blob_max_circularity;
+    blobParams.minCircularity       = static_cast<float>(cfg.blob_min_circularity);
+    blobParams.maxCircularity       = static_cast<float>(cfg.blob_max_circularity);
 
     blobParams.filterByConvexity    = cfg.blob_filter_by_convexity;
-    blobParams.minConvexity         = cfg.blob_min_convexity;
-    blobParams.maxConvexity         = cfg.blob_max_convexity;
+    blobParams.minConvexity         = static_cast<float>(cfg.blob_min_convexity);
+    blobParams.maxConvexity         = static_cast<float>(cfg.blob_max_convexity);
 
     blobParams.filterByInertia      = cfg.blob_filter_by_inertia;
-    blobParams.minInertiaRatio      = cfg.blob_min_inertia;
-    blobParams.maxInertiaRatio      = cfg.blob_max_inertia;
+    blobParams.minInertiaRatio      = static_cast<float>(cfg.blob_min_inertia);
+    blobParams.maxInertiaRatio      = static_cast<float>(cfg.blob_max_inertia);
 
     blobParams.filterByArea         = cfg.blob_filter_by_area;
-    blobParams.minArea              = cfg.blob_min_area;
-    blobParams.maxArea              = cfg.blob_max_area;
+    blobParams.minArea              = static_cast<float>(cfg.blob_min_area);
+    blobParams.maxArea              = static_cast<float>(cfg.blob_max_area);
     return blobParams;
 }
 
