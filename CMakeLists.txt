@@ -128,14 +128,14 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/camera_homography.cpp
-# )
+add_library(camera_homography_estimator_lib
+    src/homography_estimator.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(camera_homography_estimator_lib ${PROJECT_NAME}_gencfg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
@@ -214,7 +214,10 @@ if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
     add_rostest_gtest(camera_homography_estimator_test launch/homography_estimator.test
         test/homography_estimator_test.cpp
-        src/homography_estimator.cpp
         )
-    target_link_libraries(camera_homography_estimator_test ${catkin_LIBRARIES})
+    target_link_libraries(camera_homography_estimator_test
+        camera_homography_estimator_lib
+        ${catkin_LIBRARIES}
+        ${OpenCV_LIBS}
+        )
 endif()

@@ -15,12 +15,6 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
   image_sub_ = it_.subscribe("/camera/image_raw", 1, &HomographyEstimator::imageCb, this);
   cam_info_sub = nh_.subscribe("/camera/camera_info", 1, &HomographyEstimator::camInfoCb, this);
 
-  // launch CV windows
-  cv::namedWindow("homography_estimator_input");
-  cv::namedWindow("homography_estimator_keypoints", cv::WINDOW_NORMAL);
-  cv::namedWindow("homography_estimator_pattern", cv::WINDOW_NORMAL);
-  cv::namedWindow("homography_estimator_preview");
-
   ROS_INFO("connecting to dynamic reconfiguration server");
   ros::NodeHandle reconf_node(pnh_, "settings");
 
@@ -30,13 +24,11 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
 
 }
 
+
+
 // desctructor
 HomographyEstimator::~HomographyEstimator() {
-    //destroy CV windows
-    cv::destroyWindow("homography_estimator_input");
-    cv::destroyWindow("homography_estimator_pattern");
-    cv::destroyWindow("homography_estimator_keypoints");
-    cv::destroyWindow("homography_estimator_preview");
+
 }
 
 
@@ -60,6 +52,12 @@ void HomographyEstimator::initParameters() {
     // initialize blob detector
     auto blobParams = getBlobDetectorParams();
     blobDetector = cv::SimpleBlobDetector::create(blobParams);
+
+    // launch CV windows
+    cv::namedWindow("homography_estimator_input");
+    cv::namedWindow("homography_estimator_keypoints", cv::WINDOW_NORMAL);
+    cv::namedWindow("homography_estimator_pattern", cv::WINDOW_NORMAL);
+    cv::namedWindow("homography_estimator_preview");
 
     return;
 }
@@ -261,6 +259,9 @@ cv::Point HomographyEstimator::checkPointSize(const cv::Mat& img, const int x, c
   }else{
     ret.y = y;
   }
+
+  ret.x = std::max(0, ret.x);
+  ret.y = std::max(0, ret.y);
 
   return ret;
 }
