@@ -1,12 +1,11 @@
 <launch>
 
-    <!-- TODO: enable remapping
     <arg name="image_topic" default="/camera/image_raw"/>
-    <arg name="cam_info_topic" default="/camera/camera_info"/> -->
+    <arg name="cam_info_topic" default="/camera/camera_info"/>
 
     <node name="camera_homography_estimator" pkg="drive_ros_camera_homography" type="camera_homography_estimator" respawn="false" output="screen">
-        <!--<remap from="~/img_in" to="$(arg image_topic)"/>
-        <remap from="~/cam_info" to="$(arg cam_info_topic)"/>-->
+        <remap from="~/img_in" to="$(arg image_topic)"/>
+        <remap from="~/cam_info" to="$(arg cam_info_topic)"/>
 
         <param name="save_file" type="str" value="$(find drive_ros_camera_homography)/homography_export.yml" />
     </node>

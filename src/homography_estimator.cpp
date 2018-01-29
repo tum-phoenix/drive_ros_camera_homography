@@ -12,8 +12,8 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
   it_(pnh)
 {
   // subscribe to topics
-  image_sub_ = it_.subscribe("/camera/image_raw", 1, &HomographyEstimator::imageCb, this);
-  cam_info_sub = nh_.subscribe("/camera/camera_info", 1, &HomographyEstimator::camInfoCb, this);
+  image_sub_ = it_.subscribe("img_in", 1, &HomographyEstimator::imageCb, this);
+  cam_info_sub = pnh_.subscribe("cam_info", 1, &HomographyEstimator::camInfoCb, this);
 
   ROS_INFO("connecting to dynamic reconfiguration server");
   ros::NodeHandle reconf_node(pnh_, "settings");
