@@ -139,7 +139,7 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
   cv::Mat img, img_with_points;
   try
   {
-    cv_ptr = cv_bridge::toCvCopy(msg);
+    cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
   }
   catch (cv_bridge::Exception& e)
   {
