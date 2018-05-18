@@ -11,9 +11,21 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
   pnh_(pnh),
   it_(pnh)
 {
+
+  // check if camera info is set
+  std::string cam_info = pnh_.param<std::string>("camera_info", "");
+
+
   // subscribe to topics
   image_sub_ = it_.subscribe("img_in", 1, &HomographyEstimator::imageCb, this);
-  cam_info_sub = pnh_.subscribe("cam_info", 1, &HomographyEstimator::camInfoCb, this);
+
+  if(cam_info.empty()){
+      calLoaded = true;
+      ROS_INFO("No camera info topic name provided. Assuming image is already rectified.");
+  }else{
+      cam_info_sub = pnh_.subscribe("cam_info", 1, &HomographyEstimator::camInfoCb, this);
+      ROS_INFO("Camera info topic name provided. Assuming image needs to be rectified.");
+  }
 
   ROS_INFO("connecting to dynamic reconfiguration server");
   ros::NodeHandle reconf_node(pnh_, "settings");
@@ -136,8 +148,17 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
     return;
   }
 
+  // don't undistort image
+  if(camera_model_.distortionCoeffs().empty())
+  {
+        img = cv_ptr->image;  // we dont need to be fast here
+
+
   // undistort image
-  cv::undistort(cv_ptr->image, img, camera_model_.intrinsicMatrix(), camera_model_.distortionCoeffs());
+  }else{
+      cv::undistort(cv_ptr->image, img, camera_model_.intrinsicMatrix(), camera_model_.distortionCoeffs());
+  }
+
 
   // convert color space
   cv::cvtColor(img, imgColor, CV_GRAY2BGR);
