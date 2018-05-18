@@ -1,7 +1,7 @@
 <launch>
 
     <!-- Image Topic -->
-    <arg name="image_topic" default="/left/image_rect_color"/>
+    <arg name="image_topic" default="/camera/image_raw"/>
 
     <!-- Camera Info Topic
         if camera info topic name is empty

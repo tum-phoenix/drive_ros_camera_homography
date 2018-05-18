@@ -136,7 +136,7 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
   // process image
   cv_bridge::CvImagePtr cv_ptr;
-  cv::Mat img, imgColor;
+  cv::Mat img, img_with_points;
   try
   {
     cv_ptr = cv_bridge::toCvCopy(msg);
@@ -159,34 +159,33 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
       cv::undistort(cv_ptr->image, img, camera_model_.intrinsicMatrix(), camera_model_.distortionCoeffs());
   }
 
-
-  // convert color space
-  cv::cvtColor(img, imgColor, CV_GRAY2BGR);
+  // copy image to draw in it
+  img_with_points = img;
 
   // get estimates points from cfg
   std::vector<cv::Point2f> estimatePoints;
-  estimatePoints.emplace_back(checkPointSize(img, cfg.p_top_left_x, cfg.p_top_left_y));
-  estimatePoints.emplace_back(checkPointSize(img, cfg.p_top_right_x, cfg.p_top_right_y));
-  estimatePoints.emplace_back(checkPointSize(img, cfg.p_bot_right_x, cfg.p_bot_right_y));
-  estimatePoints.emplace_back(checkPointSize(img, cfg.p_bot_left_x, cfg.p_bot_left_y));
+  estimatePoints.emplace_back(checkPointSize(img_with_points, cfg.p_top_left_x, cfg.p_top_left_y));
+  estimatePoints.emplace_back(checkPointSize(img_with_points, cfg.p_top_right_x, cfg.p_top_right_y));
+  estimatePoints.emplace_back(checkPointSize(img_with_points, cfg.p_bot_right_x, cfg.p_bot_right_y));
+  estimatePoints.emplace_back(checkPointSize(img_with_points, cfg.p_bot_left_x, cfg.p_bot_left_y));
 
-  line(imgColor, checkPointSize(img, cfg.p_bot_right_x, cfg.p_bot_right_y),
-                 checkPointSize(img, cfg.p_bot_left_x, cfg.p_bot_left_y),
-                 cv::Scalar(110, 220, 0),  2, 8 );
+  line(img_with_points, checkPointSize(img_with_points, cfg.p_bot_right_x, cfg.p_bot_right_y),
+                        checkPointSize(img_with_points, cfg.p_bot_left_x, cfg.p_bot_left_y),
+                        cv::Scalar(110, 220, 0),  2, 8 );
 
-  line(imgColor, checkPointSize(img, cfg.p_bot_left_x, cfg.p_bot_left_y),
-                 checkPointSize(img, cfg.p_top_left_x, cfg.p_top_left_y),
-                 cv::Scalar(110, 220, 0),  2, 8 );
+  line(img_with_points, checkPointSize(img_with_points, cfg.p_bot_left_x, cfg.p_bot_left_y),
+                        checkPointSize(img_with_points, cfg.p_top_left_x, cfg.p_top_left_y),
+                        cv::Scalar(110, 220, 0),  2, 8 );
 
-  line(imgColor, checkPointSize(img, cfg.p_top_left_x, cfg.p_top_left_y),
-                 checkPointSize(img, cfg.p_top_right_x, cfg.p_top_right_y),
-                 cv::Scalar(110, 220, 0),  2, 8 );
+  line(img_with_points, checkPointSize(img_with_points, cfg.p_top_left_x, cfg.p_top_left_y),
+                        checkPointSize(img_with_points, cfg.p_top_right_x, cfg.p_top_right_y),
+                        cv::Scalar(110, 220, 0),  2, 8 );
 
-  line(imgColor, checkPointSize(img, cfg.p_top_right_x, cfg.p_top_right_y),
-                 checkPointSize(img, cfg.p_bot_right_x, cfg.p_bot_right_y),
-                 cv::Scalar(110, 220, 0),  2, 8 );
+  line(img_with_points, checkPointSize(img_with_points, cfg.p_top_right_x, cfg.p_top_right_y),
+                        checkPointSize(img_with_points, cfg.p_bot_right_x, cfg.p_bot_right_y),
+                        cv::Scalar(110, 220, 0),  2, 8 );
 
-  cv::imshow("homography_estimator_input", imgColor);
+  cv::imshow("homography_estimator_input", img_with_points);
 
   // pattern outline
   std::vector<cv::Point2f> outlinePoints;
@@ -202,11 +201,10 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
 
   if(!estimate.empty()){
       // Warp image using estimate
-      cv::Mat warped, tmp, warpedColor;
+      cv::Mat warped, tmp;
       // Warp the logo image to change its perspective
       cv::warpPerspective(img, tmp, estimate, outlineSize);
       cv::equalizeHist(tmp, warped);
-      cv::cvtColor(warped, warpedColor, CV_GRAY2BGR);
 
       // Detect keypoints
       {
@@ -220,11 +218,11 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
       // Detect pattern
       std::vector<cv::Point2f> detectedPoints;
       bool patternDetected = findPoints(warped, detectedPoints);
-      cv::drawChessboardCorners(warpedColor, patternSize, cv::Mat(detectedPoints), patternDetected);
+      cv::drawChessboardCorners(warped, patternSize, cv::Mat(detectedPoints), patternDetected);
 
 
       // Detect Keypoints
-      cv::imshow("homography_estimator_pattern", warpedColor);
+      cv::imshow("homography_estimator_pattern", warped);
 
       // Compute Refinement
       if(patternDetected){
@@ -265,19 +263,19 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
 // check if points are in image borders
 cv::Point HomographyEstimator::checkPointSize(const cv::Mat& img, const int x, const int y)
 {
-  int im_x = img.cols;
-  int im_y = img.rows;
+  int max_x = img.cols-1;
+  int max_y = img.rows-1;
 
   cv::Point ret;
 
-  if(x > im_x){
-    ret.x = im_x;
+  if(x > max_x){
+    ret.x = max_x;
   }else{
     ret.x = x;
   }
 
-  if(y > im_y){
-    ret.y = im_y;
+  if(y > max_y){
+    ret.y = max_y;
   }else{
     ret.y = y;
   }
