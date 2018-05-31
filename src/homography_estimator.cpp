@@ -263,8 +263,8 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
 // check if points are in image borders
 cv::Point HomographyEstimator::checkPointSize(const cv::Mat& img, const int x, const int y)
 {
-  int max_x = img.cols-1;
-  int max_y = img.rows-1;
+  int max_x = img.cols;
+  int max_y = img.rows;
 
   cv::Point ret;
 
