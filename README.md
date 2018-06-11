@@ -17,7 +17,7 @@ estimates [homography](https://en.wikipedia.org/wiki/Homography_(computer_vision
 - size of pattern (`points_per_col` and `points_per_row`)
 - distance between pattern (`pattern_length`)
 - offset of lower right point (`pattern_offset_x` and `pattern_offset_y`)
-- some scale factor for outline, just use 50 (`outline_scale_factor`) 
+- some scale factor for outline, just use 50 (`outline_scale_factor`)
 - [blob filter settings](https://www.learnopencv.com/blob-detection-using-opencv-python-c/)
 
 ![List of Parameters](https://github.com/tum-phoenix/drive_ros_camera_homography/blob/master/doc/rqt_dynamic_reconfigure.png)
@@ -66,8 +66,10 @@ cam2world: !!opencv-matrix
        -2.5022146305447759e-04, 3.2544990711281058e-02,
        8.3393416152725042e-01 ]
 ```
-       
+
 ## credits
 - [mherb](https://github.com/orgs/tum-phoenix/people/mherb)
 - [Phibedy](https://github.com/orgs/tum-phoenix/people/Phibedy)
 - [fabolhak](https://github.com/orgs/tum-phoenix/people/fabolhak)
+
+[Original version](https://github.com/lms-org/config_calibration/tree/master/external/modules/homography_estimator)
