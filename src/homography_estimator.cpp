@@ -82,7 +82,8 @@ void HomographyEstimator::computePatternPoints()
 {
     worldPoints.resize(0);
 
-    double length = cfg.pattern_length;
+    double delta_x  = cfg.pattern_delta_x;
+    double delta_y  = cfg.pattern_delta_y;
     double offset_x = cfg.pattern_offset_x;
     double offset_y = cfg.pattern_offset_y;
 
@@ -91,16 +92,16 @@ void HomographyEstimator::computePatternPoints()
         case Pattern::CIRCLES:
             for (int i = 0; i < patternSize.height; i++) {
                 for (int j = 0; j < patternSize.width; j++) {
-                    worldPoints.emplace_back(offset_x + i * length,
-                                             offset_y + j * length);
+                    worldPoints.emplace_back(offset_x + i * delta_x,
+                                             offset_y + j * delta_y);
                 }
             }
             break;
         case Pattern::CIRCLES_ASYMMETRIC:
             for (int i = 0; i < patternSize.height; i++) {
                 for (int j = 0; j < patternSize.width; j++) {
-                    worldPoints.emplace_back(offset_x + i * length,
-                                             offset_y + (2 * j + i % 2) * length);
+                    worldPoints.emplace_back(offset_x + i * delta_x,
+                                             offset_y + (2 * j + i % 2) * delta_y);
                 }
             }
             break;

@@ -15,7 +15,7 @@ estimates [homography](https://en.wikipedia.org/wiki/Homography_(computer_vision
 - pattern type (supported: `chessboard`, `circles`, `circles_asymmetric`)
 - estimated points for homography `p_{bot|top}_{right|left}_{x|y}` (border of green lines in `homography_estimator_input` image)
 - size of pattern (`points_per_col` and `points_per_row`)
-- distance between pattern (`pattern_length`)
+- delta distance between pattern elements (`pattern_delta_x` and `pattern_delta_y`)
 - offset of lower right point (`pattern_offset_x` and `pattern_offset_y`)
 - some scale factor for outline, just use 50 (`outline_scale_factor`)
 - [blob filter settings](https://www.learnopencv.com/blob-detection-using-opencv-python-c/)
