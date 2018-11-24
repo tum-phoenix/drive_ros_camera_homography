@@ -23,7 +23,7 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
       calLoaded = true;
       ROS_INFO("No camera info topic name provided. Assuming image is already rectified.");
   }else{
-      cam_info_sub = pnh_.subscribe("cam_info", 1, &HomographyEstimator::camInfoCb, this);
+      cam_info_sub = pnh_.subscribe(cam_info, 1, &HomographyEstimator::camInfoCb, this);
       ROS_INFO("Camera info topic name provided. Assuming image needs to be rectified.");
   }
 
