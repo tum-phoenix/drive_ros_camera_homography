@@ -70,7 +70,7 @@ void HomographyEstimator::initParameters() {
     cv::namedWindow("homography_estimator_input");
     cv::namedWindow("homography_estimator_keypoints", cv::WINDOW_NORMAL);
     cv::namedWindow("homography_estimator_pattern", cv::WINDOW_NORMAL);
-    cv::namedWindow("homography_estimator_preview");
+    cv::namedWindow("homography_estimator_preview", cv::WINDOW_NORMAL);
 
     return;
 }
@@ -198,7 +198,7 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
   outlinePoints.emplace_back(0, outlineSize.height);
 
   // calculate estimate
-  estimate = cv::findHomography(estimatePoints, outlinePoints);
+  estimate = cv::findHomography(estimatePoints, outlinePoints, CV_RANSAC);
 
   if(!estimate.empty()){
       // Warp image using estimate
@@ -342,7 +342,7 @@ bool HomographyEstimator::computeRefinement(const std::vector<cv::Point2f> detec
         ROS_ERROR_STREAM("computeRefinement"<<"point count doesn't match!"<<detectedPoints.size()<<" "<<worldPoints.size());
         return false;
     }
-    refinement = cv::findHomography(detectedPoints, worldPoints);
+    refinement = cv::findHomography(detectedPoints, worldPoints, CV_RANSAC);
     return true;
 }
 
@@ -382,8 +382,14 @@ void HomographyEstimator::saveHomography()
   ROS_INFO_STREAM("Saving parameters to file:" << filepath);
 
   cv::FileStorage file(filepath, cv::FileStorage::WRITE);
-  file << "world2cam" << world2cam;
-  file << "cam2world" << cam2world;
+//  file << "world2cam" << world2cam;
+//  file << "cam2world" << cam2world;
+  // directly save the scaled homography
+  file << "world2cam" << topView2cam;
+  file << "cam2world" << topView2cam.inv();
+
+  file << "world2cam_unscaled" << world2cam;
+  file << "cam2world_unscaled" << cam2world;
 
   file.release();
 

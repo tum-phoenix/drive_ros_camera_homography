@@ -12,10 +12,12 @@
 
     <arg name="config_file" default="$(find drive_ros_camera_homography)/config/car_2019.yaml"/>
 
+    <arg name="save_file" default="$(find drive_ros_camera_homography)/homography_export.yaml"/>
+
     <node name="camera_homography_estimator" pkg="drive_ros_camera_homography" type="camera_homography_estimator" respawn="false" output="screen">
         <remap from="~/img_in" to="$(arg image_topic)"/>
         <param name="camera_info" type="str" value="$(arg cam_info_topic)"/>
-        <param name="save_file" type="str" value="$(find drive_ros_camera_homography)/homography_export.yaml" />
+        <param name="save_file" type="str" value="$(arg save_file)" />
     </node>
 
     <node name="dynparam_load_camera_homography" pkg="dynamic_reconfigure"  type="dynparam" args="load /camera_homography_estimator $(arg config_file)"/>
