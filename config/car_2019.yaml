@@ -43,8 +43,8 @@ dictitems:
         state: []
       parent: 0
       pattern: 2
-      pattern_delta_x: 0.08
-      pattern_delta_y: 0.08
+      pattern_delta_x: 0.06
+      pattern_delta_y: 0.06
       pattern_offset_x: 0.453
       pattern_offset_y: -0.269
       points_per_col: 15

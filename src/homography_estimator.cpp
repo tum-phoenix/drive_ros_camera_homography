@@ -382,14 +382,11 @@ void HomographyEstimator::saveHomography()
   ROS_INFO_STREAM("Saving parameters to file:" << filepath);
 
   cv::FileStorage file(filepath, cv::FileStorage::WRITE);
-//  file << "world2cam" << world2cam;
-//  file << "cam2world" << cam2world;
+  file << "world2cam" << world2cam;
+  file << "cam2world" << cam2world;
   // directly save the scaled homography
-  file << "world2cam" << topView2cam;
-  file << "cam2world" << topView2cam.inv();
-
-  file << "world2cam_unscaled" << world2cam;
-  file << "cam2world_unscaled" << cam2world;
+  file << "world2cam_scaled" << topView2cam;
+  file << "cam2world_scaled" << topView2cam.inv();
 
   file.release();
 
