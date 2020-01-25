@@ -8,7 +8,7 @@
            - image is assumed to be already rectified
            - no distortion
     -->
-    <arg name="cam_info_topic" default=""/>
+    <arg name="cam_info_topic" default="/camera/camera_info"/>
 
     <arg name="config_file" default="$(find drive_ros_camera_homography)/config/car_2019.yaml"/>
 
