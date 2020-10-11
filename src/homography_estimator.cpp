@@ -198,7 +198,7 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
   outlinePoints.emplace_back(0, outlineSize.height);
 
   // calculate estimate
-  estimate = cv::findHomography(estimatePoints, outlinePoints, CV_RANSAC);
+  estimate = cv::findHomography(estimatePoints, outlinePoints, cv::RANSAC);
 
   if(!estimate.empty()){
       // Warp image using estimate
@@ -342,7 +342,7 @@ bool HomographyEstimator::computeRefinement(const std::vector<cv::Point2f> detec
         ROS_ERROR_STREAM("computeRefinement"<<"point count doesn't match!"<<detectedPoints.size()<<" "<<worldPoints.size());
         return false;
     }
-    refinement = cv::findHomography(detectedPoints, worldPoints, CV_RANSAC);
+    refinement = cv::findHomography(detectedPoints, worldPoints, cv::RANSAC);
     return true;
 }
 
